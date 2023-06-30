@@ -10,9 +10,9 @@
 
     <div class="clock">
       <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
+        <div class="hand hour-hand transition"></div>
+        <div class="hand min-hand transition"></div>
+        <div class="hand second-hand transition"></div>
       </div>
     </div>
 
@@ -63,13 +63,56 @@
       background: black;
       position: absolute;
       top: 50%;
+      transform-origin: 100%;
+      transform: rotate(90deg);
+      
+    }
+
+    .hour-hand{
+      width: 35%;
+      left: 44px;
+    }
+
+    .second-hand{
+      background-color: red;
+    }
+
+    .transition{
+      transition: transform 0.1s cubic-bezier(1, 1.38, 0, 1.49);
     }
 
   </style>
 
   <script>
-
-
+    setInterval(updateClockHTML, 1000);
+    function updateClockHTML(){
+      const clock = document.querySelector(".clock");
+      const secDegrees = new Date().getSeconds() * 6;
+      const minDegrees = new Date().getMinutes() * 6;
+      const hrDegrees = new Date().getHours() * 30;
+      if(secDegrees === 0){
+        clock.querySelector(".second-hand").classList.remove("transition")
+      } else if(secDegrees === 1){
+        clock.querySelector(".second-hand").classList.add("transition")
+      }
+      if(minDegrees === 0){
+        clock.querySelector(".min-hand").classList.remove("transition")
+      } else if(minDegrees === 1){
+        clock.querySelector(".min-hand").classList.add("transition")
+      }
+      if(hrDegrees === 0){
+        clock.querySelector(".hour-hand").classList.remove("transition")
+      } else if(hrDegrees === 1){
+        clock.querySelector(".hour-hand").classList.add("transition")
+      }
+      clock.querySelector(".second-hand").style.transform = `rotate(${90 + secDegrees}deg)`;
+      clock.querySelector(".min-hand").style.transform = `rotate(${90 + minDegrees}deg)`;
+      clock.querySelector(".hour-hand").style.transform = `rotate(${90 + hrDegrees}deg)`;
+    }
   </script>
+
+  
 </body>
 </html>
+
+
