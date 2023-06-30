@@ -59,7 +59,29 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+  const KEYS = {"a":65,"s":83,"d":68,"f":70,"g":71,"h":72,"j":74,"k":75,"l":76};
+  window.addEventListener("keydown", playKey);
+  window.addEventListener("transitionend", stopKey);
+  let timeout;
 
+  function playKey(e){
+    if(e.repeat) {
+      return;
+    } else if(KEYS[e.key]){
+      const pressedKey = e.key; // Use key instead of deprecated charCode
+      const keyEl = [... document.querySelectorAll(".key")].find(el => el.firstElementChild.textContent === pressedKey.toUpperCase());
+      keyEl.classList.add("playing");
+      const audio = document.querySelector(`audio[data-key="${KEYS[pressedKey]}"]`);
+      audio.pause();
+      audio.currentTime = 0;
+      audio.play();
+    }
+  }
+  function stopKey(e){
+    if(e.propertyName === "transform") {
+      e.target.classList.remove("playing");
+    }
+  }
 </script>
 
 
