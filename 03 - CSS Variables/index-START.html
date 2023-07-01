@@ -27,6 +27,12 @@
       misc styles, nothing to do with CSS variables
     */
 
+    :root{
+      --padding: 10px;
+      --blur: 10px;
+      --color: #ffc600;
+    }
+
     body {
       text-align: center;
       background: #193549;
@@ -43,9 +49,38 @@
     input {
       width: 100px;
     }
+
+    img{
+      background-color: var(--color);
+      padding: var(--padding);
+      filter: blur(var(--blur));
+
+    }
   </style>
 
   <script>
+    let padding, blurr, bgColor;
+    const root = document.querySelector(":root");
+    const image = document.querySelector("img");
+    const spacingControl = document.querySelector(".controls input[name='spacing']");
+    spacingControl.addEventListener("input", changeImgPadding)
+    const blurControl = document.querySelector(".controls input[name='blur']");
+    blurControl.addEventListener("input", changeImgBlur)
+    const colorControl = document.querySelector(".controls input[name='base']");
+    colorControl.addEventListener("input", changeBgColor)
+
+    function changeImgPadding(e){
+      padding = e.target.value;
+      root.style.setProperty("--padding", padding+"px")
+    }
+    function changeImgBlur(e){
+      blurr = e.target.value; 
+      root.style.setProperty("--blur", blurr +"px")
+    }
+    function changeBgColor(e){
+      bgColor = e.target.value;
+      root.style.setProperty("--color", bgColor)
+    }
   </script>
 
 </body>
