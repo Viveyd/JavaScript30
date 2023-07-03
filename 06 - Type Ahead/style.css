@@ -67,8 +67,26 @@ input.search {
 
 span.population {
   font-size: 15px;
+  font-style: italic;
 }
 
 .hl {
   background: #ffc600;
+}
+
+.show{
+  display: n;
+}
+
+.highlight{
+  background-color: #ffc600;
+}
+
+.hide{
+  display: none !important;
+}
+
+
+.suggestions.has-results li:nth-child(1), .suggestions.has-results li:nth-child(2){
+  display: none !important;
 }

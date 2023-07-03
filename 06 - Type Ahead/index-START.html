@@ -13,10 +13,107 @@
     <ul class="suggestions">
       <li>Filter for a city</li>
       <li>or a state</li>
+      <li class="hide">No results</li>
     </ul>
   </form>
 <script>
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+const suggestionsCon = document.querySelector(".search-form .suggestions");
+const cities = fetchData();
+async function fetchData(){
+  const response =  await fetch(endpoint);
+  const json = await response.json();
+  return json;
+}
+
+const searchBox = document.querySelector(".search-form input");
+searchBox.addEventListener("input", updateSuggestions)
+
+function updateSuggestions(e){
+  const query = e.target.value.trim();
+  clearSuggestions();
+  if(query === ""){
+    suggestionsCon.classList.remove("has-results");
+    return;
+  } 
+  cities
+  .then((cityList) => cityList.filter(city => includes_insensitive(city.city, query)|| includes_insensitive(city.state, query)))
+  .then((filteredCityList) => filteredCityList.forEach(city => addSuggestion(city)))
+  .then(() => {
+    if(suggestionsCon.children.length > 3 ){
+      suggestionsCon.classList.add("has-results")
+      suggestionsCon.children[2].classList.add("hide");
+    } else if(query !== "" && suggestionsCon.children.length === 3){
+      suggestionsCon.children[2].classList.remove("hide");
+    }
+  })
+}
+
+function addSuggestion(city){
+  const suggestion = document.createElement("li");
+  const place = document.createElement("span");
+  const pop = document.createElement("span");
+  pop.classList.add("population");
+
+  place.textContent = `${city.city}, ${city.state}`;
+  pop.textContent = addCommas(city.population);
+
+  highlightMatchesIn(place);
+
+  suggestion.appendChild(place);
+  suggestion.appendChild(pop);
+  suggestionsCon.appendChild(suggestion);
+}
+
+function highlightMatchesIn(spanEl){
+  const query = searchBox.value;
+  const text = spanEl.textContent;
+  spanEl.textContent = ""; // Empty it since derived nodes will fill it later 
+  // Find location (starting index) of substrings of "text" that match search query
+  const substrIndice = [];
+  let counter = 0;
+  while(includes_insensitive(text, query, counter)){ // while there are still matches, push any index found
+    const indexOfMatchFound = text.toLowerCase().indexOf(query.toLowerCase(), counter); // matches can be in different cases
+    substrIndice.push(indexOfMatchFound);
+    counter = indexOfMatchFound + query.length // to progress in loop while skipping non-matches
+  }
+  // Use starting index to turn "text" into an array of DOM nodes (textNodes or highlighted spans) that will all be appended to spanEl
+  const appendList = [];
+  counter = 0; // reuse counter for following operation
+  while(counter < text.length){
+    if(counter === substrIndice[0]){
+      appendList.push(createHighlightedSpan(text.slice(counter, counter + query.length)))
+      counter +=  query.length;
+      substrIndice.shift(); // so substrIndice[0] value changes
+    } else {
+      appendList.push(document.createTextNode(text[counter]));
+      counter += 1;
+    }
+  }
+  appendList.forEach(node => spanEl.appendChild(node));
+
+}
+
+function createHighlightedSpan(text){
+  const span = document.createElement("span");
+  span.classList.add("highlight");
+  span.textContent = text;
+  return span;
+}
+
+function clearSuggestions(){
+  while(suggestionsCon.children.length > 3){
+    suggestionsCon.removeChild(suggestionsCon.lastElementChild);
+  }
+}
+
+function includes_insensitive(text, substring, startFrom = 0){
+  return text.toLowerCase().includes(substring.toLowerCase(), startFrom);
+}
+
+function addCommas(num){
+  return [...num].reverse().map((item, index) => (index+1) % 3 === 0 && index !== (num.length-1) ?  "," + item: item).reverse().join("");
+}
 
 </script>
 </body>
