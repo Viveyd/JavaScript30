@@ -8,6 +8,48 @@
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
+  const canvas = document.querySelector("canvas");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext("2d");
+
+  let shouldDraw = false;
+  let hue = 0;
+  let direction = "down";
+  let lastX, lastY;
+
+  ctx.strokeStyle = "hsl(0, 100%, 50%)";
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ctx.lineWidth = 100;
+
+
+
+  canvas.addEventListener("mousemove", draw);
+  canvas.addEventListener("mousedown", (e) => {
+    shouldDraw = true;
+    lastX = e.x;
+    lastY = e.y;
+  });
+  canvas.addEventListener("mouseup", (e) => {
+    shouldDraw = false;
+  })
+
+  function draw(e){
+    if(shouldDraw === true){
+      hue = hue === 360 ? 0 : hue+1;
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+      ctx.lineWidth = direction === "up" ? ctx.lineWidth + 1: ctx.lineWidth - 1;
+      if(ctx.lineWidth <= 1) direction = "up";
+      else if (ctx.lineWidth >= 100) direction = "down";
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(e.x, e.y);
+      ctx.stroke();
+      lastX = e.x;
+      lastY = e.y;
+    }
+  }
 </script>
 
 <style>
