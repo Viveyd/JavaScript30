@@ -97,6 +97,52 @@
   </div>
 
 <script>
+  const inbox = document.querySelector(".inbox");
+  const checkboxes = [... inbox.querySelectorAll("input[type='checkbox']")];
+  let isShifting = false;
+  let prevCheckbox = null;
+
+
+
+  checkboxes.forEach(checkbox => addEventListener("change", changeState));
+  window.addEventListener("keydown", (e) => {
+    isShifting = true;
+  });
+  window.addEventListener("keyup", (e) => {
+    isShifting = false;
+  });
+
+  function changeState(e){
+    if(isShifting){
+      setInBetweens(prevCheckbox, e.target);
+    }
+    prevCheckbox = e.target;
+  }
+
+  function setInBetweens(last, current){
+    let lastI = checkboxes.indexOf(last);
+    const currentI = checkboxes.indexOf(current);
+
+    let checkState;
+    if(last === null){
+      checkState = true;
+      lastI = 0;  
+    }
+    else if(last.checked === current.checked) checkState = last.checked;
+    else if (last.checked !== current.checked) checkState = !last.checked;
+
+
+    if(lastI < currentI){ 
+      for(let i = lastI; i <= currentI; i++){
+        checkboxes[i].checked = checkState;
+      }
+    } else if (lastI > currentI){ 
+      for(let i = lastI; i >= currentI; i--){
+        checkboxes[i].checked = checkState;
+      }
+    }
+  }
+  
 </script>
 </body>
 </html>
