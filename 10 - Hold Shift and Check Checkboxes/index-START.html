@@ -102,8 +102,6 @@
   let isShifting = false;
   let prevCheckbox = null;
 
-
-
   checkboxes.forEach(checkbox => addEventListener("change", changeState));
   window.addEventListener("keydown", (e) => {
     isShifting = true;
@@ -113,31 +111,27 @@
   });
 
   function changeState(e){
-    if(isShifting){
-      setInBetweens(prevCheckbox, e.target);
-    }
+    if(isShifting === true && prevCheckbox !== e.target) multiCheck(prevCheckbox, e.target);
     prevCheckbox = e.target;
   }
 
-  function setInBetweens(last, current){
-    let lastI = checkboxes.indexOf(last);
-    const currentI = checkboxes.indexOf(current);
-
-    let checkState;
-    if(last === null){
+  function multiCheck(fromCb, toCb){
+    // Use checkState value to determine if operation will be multi-check or multi-uncheck
+    // Logic seems reversed but it takes into account that the targetCB.checked changes BEFORE this func executes
+    let checkState; 
+    if(fromCb === null){  // Behavior at the beginning (nothing has been checked/unchecked) where shift checking a CB also checks the CBs above it.
       checkState = true;
-      lastI = 0;  
-    }
-    else if(last.checked === current.checked) checkState = last.checked;
-    else if (last.checked !== current.checked) checkState = !last.checked;
+      fromCb = checkboxes[0];
+    } else if(fromCb.checked === toCb.checked) checkState = fromCb.checked; // If lastCB was checked/unchecked and targetCB wasn't, then otherCBs.checked = lastCB's .checked
+    else checkState = !fromCb.checked; // If lastCB & targetCB both checked, uncheck both (and CBs between). If both unchecked, then check them both (and CBs between).
 
-
-    if(lastI < currentI){ 
-      for(let i = lastI; i <= currentI; i++){
+    // Iterate from last CB to target CB setting CBs .checked value to checkState from above
+    if(checkboxes.indexOf(fromCb) < checkboxes.indexOf(toCb)){
+      for(let i = checkboxes.indexOf(fromCb); i < checkboxes.indexOf(toCb); i++){
         checkboxes[i].checked = checkState;
       }
-    } else if (lastI > currentI){ 
-      for(let i = lastI; i >= currentI; i--){
+    } else {
+      for(let i = checkboxes.indexOf(fromCb); i > checkboxes.indexOf(toCb); i--){
         checkboxes[i].checked = checkState;
       }
     }
