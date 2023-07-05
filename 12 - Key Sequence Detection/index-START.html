@@ -7,6 +7,25 @@
     <link rel="icon" href="https://fav.farm/🔥" />
   </head>
   <body>
-    <script></script>
+    <script>
+      const SECRETCODE = "hesoyam";
+      const mySound = new Audio("lmao.mp3");
+      const temp = [];
+      window.addEventListener("keypress", (e) => {
+        console.log(e.key)
+        if(temp.length < SECRETCODE.length){
+          temp.push(e.key)
+        } else {
+          temp.pop();
+          temp.push(e.key);
+        }
+        if(temp.join("").includes(SECRETCODE)) {
+          console.log(`CHEAT CODE ${SECRETCODE} ACTIVATED`);
+          mySound.load();
+          mySound.play();
+          cornify_add();
+        };
+      });
+    </script>
   </body>
 </html>
