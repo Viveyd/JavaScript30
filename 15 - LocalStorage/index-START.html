@@ -31,7 +31,59 @@
   const itemsList = document.querySelector('.plates');
   const items = [];
 
+  const addBtn =  addItems.querySelector("input[type='submit']");
+  addBtn.addEventListener("click", (e) =>{
+    e.preventDefault();
+    addItem(e.target.previousElementSibling.value, false);
+    e.target.previousElementSibling.value = "";
+    });
+
+  loadStoredItems();
+
+  function loadStoredItems(){
+    const prevItems = JSON.parse(localStorage.getItem("myItems"));
+    if(prevItems === null) return;
+    prevItems.forEach(item => {
+      addItem(item.name, item.checked, false);
+    })
+  }
+
+  function addItem(itemName, checked = false, saveToLocal = true){
+    if(itemName.trim() === "") return;
+    const item = {name: itemName, checked};
+    items.push(item); 
+
+    const li = document.createElement("li");
+    const cb = document.createElement("input");
+    const cbLabel = document.createElement("label");
+
+    li.setAttribute("data-id", items.length-1);
+    li.addEventListener("click", toggleCheckbox);
+
+    cb.type = "checkbox"
+    cb.checked = checked;
+    cbLabel.textContent = itemName;
+
+    li.appendChild(cb);
+    li.appendChild(cbLabel)
+    itemsList.appendChild(li);
+
+    if(saveToLocal === true) updateLocalStorage();
+  }
+
+  function toggleCheckbox(e){
+    const checkbox = e.currentTarget.firstElementChild;
+    checkbox.checked = !checkbox.checked;
+    items[Number(e.currentTarget.getAttribute("data-id"))].checked = checkbox.checked;
+    updateLocalStorage();
+  }
+
+  function updateLocalStorage(){
+    localStorage.setItem("myItems", JSON.stringify(items));
+  }
+
 </script>
+
 
 
 </body>
