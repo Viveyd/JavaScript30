@@ -4,17 +4,16 @@ const volumeSlider = document.querySelector("input[name='volume']");
 const playbackRateSlider = document.querySelector("input[name='playbackRate']");
 const progressCon = document.querySelector(".player__controls .progress");
 const progressFill = document.querySelector(".player__controls .progress__filled"); // aka PF
-progressFill.style.flexBasis = "0%";
 
 let isHoldingSlider = false;
 let isPlaying = false;
-let interval;
 let clientXForSpace;
 
+progressFill.style.flexBasis = "0%";
+
 playBtn.addEventListener("click", togglePlay);
-video.addEventListener("ended", () => {
-    togglePlay("off");
-})
+video.addEventListener("ended", () => togglePlay("off"))
+video.addEventListener("timeupdate", updateScrubber);
 volumeSlider.addEventListener("input", changeVolume);
 playbackRateSlider.addEventListener("input", changePlaybackRate);
 rewindBtn.addEventListener("click", (e) => changeCurrentTime(video.currentTime + (Number(e.target.getAttribute("data-skip")))));
@@ -50,22 +49,19 @@ window.addEventListener("mousemove", (e) => {
 })
 
 function setPFMaxWidthToCursor(cursorLeftPos){
-    const progressConBounds = progressCon.getBoundingClientRect();
-    const newWidth = cursorLeftPos - progressConBounds.left;
+    const newWidth = cursorLeftPos - progressCon.getBoundingClientRect().left;
     progressFill.style.flexBasis = newWidth + "px";
 }
 
 function togglePlay(cmd){
     if(cmd === "on" || isPlaying === false){
         isPlaying = true;
-        playBtn.innerHTML = '❚❚';
+        playBtn.textContent = "❚❚";
         video.play();
-        interval = setInterval(updateScrubber, 650);
     } else if (cmd === "off" || isPlaying === true){
         isPlaying = false;
         playBtn.textContent = "►";
         video.pause();
-        clearInterval(interval);
     }
 }
 
@@ -83,7 +79,7 @@ function changePlaybackRate(e){
 
 function setCurrentTimeToCursor(cursorLeftPos){
     const progressConBounds = progressCon.getBoundingClientRect();
-    let newTime = ((cursorLeftPos - progressConBounds.left) / progressConBounds.width * 100) / 100 * video.duration;
+    const newTime = ((cursorLeftPos - progressConBounds.left) / progressConBounds.width * 100) / 100 * video.duration;
     changeCurrentTime(newTime);
 }
 
