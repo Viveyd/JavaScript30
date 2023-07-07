@@ -178,11 +178,40 @@
     <li data-time="1:56">
       Video 57
     </li>
-    <li data-time="4:04">
+    <li data-time="4:04"> <!-- data-time="1:04:04" is also valid -->
       Video 58
     </li>
   </ul>
 <script>
+  // Also accepts hour inputs. Ex. 2:56:11
+  const totalTime = [... document.querySelectorAll("ul > li")]
+                    .reduce((totalTimeArr, li) => {
+                      let time = li.dataset.time.split(":").map(num => Number(num));
+                      let hour, min, sec;
+
+                      if(time.length === 3){
+                        [hour, min, sec] = time;
+                        totalTimeArr[0] += hour;
+                      } else if(time.length === 2){
+                        [min, sec] = time;
+                      }
+                    
+                      totalTimeArr[1] += min;
+                      totalTimeArr[2] += sec;
+
+                      while(totalTimeArr[2] >= 60){ // 60secs to 1min
+                        totalTimeArr[2] -= 60;
+                        totalTimeArr[1] += 1;
+                      }
+
+                      while(totalTimeArr[1] >= 60){ // 60mins to 1hour
+                        totalTimeArr[1] -= 60;
+                        totalTimeArr[0] += 1;
+                      }
+
+                      return totalTimeArr;
+                    }, [0,0,0]); // [hour, minutes, seconds]
+  console.log(...totalTime);
 </script>
 </body>
 </html>

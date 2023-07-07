@@ -47,9 +47,25 @@
   <ul id="bands"></ul>
 
 <script>
+const ul = document.querySelector("#bands");
 const bands = ['The Plot in You', 'The Devil Wears Prada', 'Pierce the Veil', 'Norma Jean', 'The Bled', 'Say Anything', 'The Midway State', 'We Came as Romans', 'Counterparts', 'Oh, Sleeper', 'A Skylit Drive', 'Anywhere But Here', 'An Old Dog'];
+const ARTICLES = ['the', 'a', 'an'];
+console.log("Sort the following array alphabetically, excluding the articles", bands);
+const sortedBands = bands.sort((bandA, bandB) =>{
+  const splitA = bandA.split(" ");
+  if(ARTICLES.includes(splitA[0].toLowerCase())) splitA.shift();
 
+  const splitB = bandB.split(" ");
+  if(ARTICLES.includes(splitB[0].toLowerCase())) splitB.shift();
 
+  return splitA.join(" ") < splitB.join(" ") ? -1 : 
+         splitA.join(" ") > splitB.join(" ") ? 1 : 0;
+});
+sortedBands.forEach(band => {
+  const li = document.createElement("li");
+  li.textContent = band;
+  ul.appendChild(li);
+})
 </script>
 
 </body>
