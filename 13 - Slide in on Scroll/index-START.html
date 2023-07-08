@@ -44,6 +44,25 @@
   </div>
 
   <script>
+    const slidingImgs = [... document.querySelectorAll(".slide-in")];
+
+    window.addEventListener("scroll", debounce(checkScroll));
+
+    function checkScroll(){
+      slidingImgs.forEach(img => {
+        // scrollY starts from bottom of page meaning the first scroll will output 0
+        // by adding the inner height (top of the document to whats visible prior scrolling)
+        // you get the distance between document top, and bottom of current viewport
+        // through we will know when the image becomes visible in the viewport
+        // in this case we want the scroll to trigger the img slide-in once we see half of it (not upon first sight) hence the / 2
+        const halfwayTriggerPoint = (window.scrollY + window.innerHeight) - (img.height / 2);
+        const distanceFromDTtoImgBottom = img.offsetTop + img.height;
+        const isHalfShown = halfwayTriggerPoint > img.offsetTop;
+        const isStillVisible = window.scrollY < distanceFromDTtoImgBottom;
+        img.classList[isHalfShown && isStillVisible ? "add" : "remove"]("active");
+      })
+    }
+
     function debounce(func, wait = 20, immediate = true) {
       var timeout;
       return function() {
