@@ -37,13 +37,12 @@
   const holes = document.querySelectorAll('.hole');
   const scoreBoard = document.querySelector('.score');
   const moles = document.querySelectorAll('.mole');
-  let molePoppingInterval;
+  let peepTimeout;
+  let hideTimeout;
   let score = 0;
 
   function startGame(){
-    molePoppingInterval = setInterval(() => {
-      soleActivate(randomPickFrom(holes));
-    }, 850)
+    randomPeep();
   }
 
   function soleActivate(target){
@@ -58,15 +57,33 @@
     return arr[randomNum];
   }
 
-  moles.forEach(mole => mole.addEventListener("click", () => {
+  function randomPeep(){
+    peepTimeout = setTimeout(() => {
+      soleActivate(randomPickFrom(holes));
+      hideMoleAfter(randomPickFrom([300, 500, 600, 700,]));
+    }, randomPickFrom([100, 200, 300, 400]));
+  }
+
+  function hideMoleAfter(ms){
+    hideTimeout = setTimeout(() => {
+      [...holes].find(hole => hole.classList.contains("up"))?.classList.remove("up");
+      randomPeep();
+    }, ms);
+  }
+
+  function whackem(e){
+    const mole = e.target;
     if(mole.parentElement.classList.contains("up")){
       score += 1;
       scoreBoard.textContent = score;
       mole.parentElement.classList.remove("up");
-      clearInterval(molePoppingInterval);
-      startGame();
+      clearTimeout(peepTimeout);
+      clearTimeout(hideTimeout);
+      randomPeep();
     }
-  }))
+  }
+
+  moles.forEach(mole => mole.addEventListener("click", whackem))
 </script>
 </body>
 </html>
