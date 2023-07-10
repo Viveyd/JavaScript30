@@ -28,6 +28,30 @@
 
   <script>
     // 👀👀👀👀👀👀👀👀👀👀👀👀👀👀👀
+    const highlighter = document.createElement("span");
+    highlighter.classList.add("highlight");
+    document.body.appendChild(highlighter);
+
+    const triggers = document.querySelectorAll("a");
+    let timeout;
+    
+    function highlight(e){
+      clearTimeout(timeout);
+      const {width, height, top, left} = e.target.getBoundingClientRect();
+      highlighter.style.width = width + "px"; 
+      highlighter.style.height = height + "px";
+      highlighter.style.transform = `translate(${left+pageXOffset}px, ${top+pageYOffset}px)`;
+    }
+
+    triggers.forEach(trigger => trigger.addEventListener("mouseenter", highlight));
+    triggers.forEach(trigger => trigger.addEventListener("mouseout", () => {
+      timeout = setTimeout(() => {
+        highlighter.style.width = 0+"px"; 
+        highlighter.style.height = 0+"px";
+        highlighter.style.transform = `translate(0px,0px)`;
+      },2000)
+    }
+    ));
   </script>
 </body>
 </html>

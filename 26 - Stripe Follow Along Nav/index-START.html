@@ -221,6 +221,41 @@
 </style>
 
 <script>
+  const triggers = document.querySelectorAll(".cool>li");
+  console.log(triggers);
+  const ddBg = document.querySelector("nav.top .dropdownBackground");
+
+
+  function showDropDown(e){
+    const trigger = e.target;
+    const dd = e.target.lastElementChild;
+    ddBg.classList.add("open");
+    trigger.classList.add("trigger-enter");
+    setTimeout(() => {
+      if(trigger.classList.contains("trigger-enter")){
+        trigger.classList.add("trigger-enter-active");
+      }
+    }
+    , 150)
+
+    const {y: triggerY, height: triggerHeight}= trigger.getBoundingClientRect();
+    const {width: ddWidth, height: ddHeight, left: ddLeft} = dd.getBoundingClientRect();
+    ddBg.style.width = ddWidth + "px";
+    ddBg.style.height = ddHeight + "px";
+    ddBg.style.transform = `translate(${ddLeft}px,${triggerY+14}px)`;
+  }
+
+  function hideDropDown(e){
+    const trigger = e.target;
+    const dd = e.target.lastElementChild;
+    ddBg.classList.remove("open");
+    trigger.classList.remove("trigger-enter", "trigger-enter-active");
+  }
+
+  triggers.forEach(trigger => {
+    trigger.addEventListener("mouseenter", showDropDown)
+    trigger.addEventListener("mouseleave", hideDropDown)
+    })
 </script>
 
 </body>

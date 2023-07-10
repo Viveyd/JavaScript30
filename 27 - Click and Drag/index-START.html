@@ -36,6 +36,34 @@
   </div>
 
 <script>
+  const scrollable = document.querySelector("div.items");
+  const scrollAmt = 20;
+  let timeout;
+  let startingScroll;
+  let holdingMouse = false;
+
+  function throttle(fn, ...args){
+    if(timeout) return;
+    timeout = setTimeout(() => {
+      fn.apply(this, args) 
+      timeout = null;
+    }, 2);
+  }
+
+  function touchScroll(e){
+    if(holdingMouse === true){
+      scrollable.scrollTo(scrollable.scrollLeft + ( e.x > startingScroll ? -scrollAmt: scrollAmt), 0)
+      startingScroll = e.x;
+    }
+  }
+
+  scrollable.addEventListener("mousedown", (e) => {
+    holdingMouse = true
+    startingScroll = e.x; 
+  });
+  scrollable.addEventListener("mouseup", () => holdingMouse = false);
+  scrollable.addEventListener("mouseleave", () => holdingMouse = false);
+  scrollable.addEventListener("mousemove", (e) => throttle(touchScroll, e));
 </script>
 
   </body>

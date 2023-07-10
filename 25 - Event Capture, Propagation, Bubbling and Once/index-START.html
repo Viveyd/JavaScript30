@@ -43,7 +43,11 @@
 
 <button></button>
 <script>
-
+  const divs = document.body.querySelectorAll("div");
+  divs.forEach(div => div.addEventListener("click", (e) => {
+    console.log(div.className);
+    e.stopPropagation();
+  }, {capture:true}))
 </script>
 </body>
 </html>
